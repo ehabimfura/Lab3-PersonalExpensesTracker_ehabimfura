@@ -40,33 +40,46 @@ def calculate_total_expenses():
 # Feature 2: Check Remaining Balance
 # -------------------------------
 def check_balance():
-    initial_balance = read_balance()
+    # 1. Read the current balance from balance.txt
+    current_balance = read_balance()
 
+    # 2. Calculate total expenses
     total_expenses = calculate_total_expenses()
-    available_balance = initial_balance - total_expenses
 
+    # 3. Available balance = current balance - total expenses
+    available_balance = current_balance - total_expenses
+
+    # 4. Display formatted report
     print("\n=== Balance Report ===")
-    print(f"Initial/Current Balance: {initial_balance} RWF")
+    print(f"Initial/Current Balance: {current_balance} RWF")
     print(f"Total Expenses to Date: {total_expenses} RWF")
     print(f"Available Balance: {available_balance} RWF")
 
-    # Option to add money
-    add_money = input("Do you want to add money? (y/n): ").lower()
+    # 5. Ask user if they want to add money
+    add_money = input("Do you want to add money to your balance? (y/n): ").lower()
     if add_money == "y":
         try:
             amount = int(input("Enter amount to add (RWF): "))
             if amount > 0:
-                initial_balance += amount
+                # 6. Update balance in balance.txt (initial/current increases)
+                current_balance += amount
                 with open("balance.txt", "w") as f:
-                    f.write(str(initial_balance))
-                print(f"New Balance: {initial_balance} RWF")
+                    f.write(str(current_balance))
+
+                # 7. Recalculate available balance for confirmation
+                # Example: before add -> available = 2,000; add 10,000 -> new available = 12,000
+                total_expenses = calculate_total_expenses()
+                new_available = current_balance - total_expenses
+
+                # 8. Display confirmation with new available balance
+                print(f"New Available Balance: {new_available} RWF")
             else:
-                print("Invalid amount. Must be a positive integer.")
+                print("Invalid amount. Must be a positive number.")
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-# -------------------------------
-# Feature 3: Add New Expense
+# ------------------------------
+#  Feature 3: Add New Expense
 # -------------------------------
 def add_expense():
     initial_balance = read_balance()
@@ -112,7 +125,7 @@ def add_expense():
         print(f"Expense saved! Remaining balance: {available_balance - amount} RWF")
 
 # -------------------------------
-# Feature 4: View Expenses
+# Feature4: View Expenses
 # -------------------------------
 def view_expenses():
     print("\n1. Search by item name")
@@ -146,7 +159,7 @@ def search_expenses(condition):
 
 # -------------------------------
 # Feature 1: Main Menu System
-# -------------------------------
+# ------------------------------
 def main_menu():
     while True:
         print("\n--- Personal Finance Tracker ---")
