@@ -2,43 +2,47 @@
 """
 Personal Expenses Tracker
 Lab 3 - 
-Tracking expenses in Rwandan Francs (RWF) using text files.
+Tracks expenses in Rwandan Francs (RWF) using text files.
 """
 
-import os
 import glob
 from datetime import datetime
 
 # -------------------------------
-# Helper function: calculate total expenses across all files
+# Helper: safely read balance.txt
+# -------------------------------
+def read_balance():
+    """Read balance from balance.txt, return 0 if file missing or empty."""
+    try:
+        with open("balance.txt", "r") as f:
+            content = f.read().strip()
+            if content == "":
+                return 0
+            return int(content)
+    except FileNotFoundError:
+        return 0
+
+# -------------------------------
+# Helper: calculate total expenses
 # -------------------------------
 def calculate_total_expenses():
+    """Sum all expenses across all expense files."""
     total = 0
-    # Look for all expense files matching the pattern
     for file in glob.glob("expenses_*.txt"):
         with open(file, "r") as f:
             for line in f:
                 parts = line.strip().split(",")
                 if len(parts) >= 3:
-                    # Amount is stored as integer in the 3rd field
-                    total += int(parts[2])
+                    total += int(parts[2])  # amount is 3rd field
     return total
 
 # -------------------------------
-# Feature2: Check Remaining Balance
-# ------------------------------
+# Feature 2: Check Remaining Balance
+# -------------------------------
 def check_balance():
-    try:
-        # Read initial/current balance from balance.txt
-        with open("balance.txt", "r") as f:
-            initial_balance = int(f.read().strip())
-    except FileNotFoundError:
-        initial_balance = 0
+    initial_balance = read_balance()
 
-    # Calculate total expenses
     total_expenses = calculate_total_expenses()
-
-    # Available balance = initial balance - total expenses
     available_balance = initial_balance - total_expenses
 
     print("\n=== Balance Report ===")
@@ -62,16 +66,11 @@ def check_balance():
             print("Invalid input. Please enter a number.")
 
 # -------------------------------
-#  Feature3: Add New Expense
+# Feature 3: Add New Expense
 # -------------------------------
 def add_expense():
-    try:
-        with open("balance.txt", "r") as f:
-            initial_balance = int(f.read().strip())
-    except FileNotFoundError:
-        initial_balance = 0
+    initial_balance = read_balance()
 
-    # Calculate available balance dynamically
     total_expenses = calculate_total_expenses()
     available_balance = initial_balance - total_expenses
 
@@ -134,7 +133,7 @@ def view_expenses():
     else:
         return
 
-# Helper function for searching expenses
+# Helper: search expenses
 def search_expenses(condition):
     for file in glob.glob("expenses_*.txt"):
         with open(file, "r") as f:
@@ -146,7 +145,7 @@ def search_expenses(condition):
                         print(f"{file}: {item} - {amount} RWF at {timestamp}")
 
 # -------------------------------
-# Feature1: Main Menu System
+# Feature 1: Main Menu System
 # -------------------------------
 def main_menu():
     while True:
@@ -168,10 +167,10 @@ def main_menu():
             print("Saving data... Goodbye!")
             break
         else:
-            print("Invalid choice. Try again")
+            print("Invalid choice. Try again.")
 
- # ------------------------------
-#  Program Entry Point
+# -------------------------------
+# Program Entry Point
 # -------------------------------
 if __name__ == "__main__":
     main_menu()
