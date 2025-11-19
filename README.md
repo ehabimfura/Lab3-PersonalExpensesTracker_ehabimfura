@@ -1,5 +1,3 @@
----
-
 # README.md  
 **Lab 3: Personal Expenses Tracker (RWF)**  
 
