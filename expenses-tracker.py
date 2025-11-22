@@ -155,19 +155,6 @@ def view_expenses():
 
 # Helper: search expenses
 def search_expenses(condition):
-    for file in glob.glob("expenses_*.txt"):
-        with open(file, "r") as f:
-            for line in f:
-                parts = line.strip().split(",")
-                if len(parts) >= 4:
-                    expense_id, item, amount, timestamp = parts
-                    if condition(item, int(amount)):
-                        print(f"{file}: {item} - {amount} RWF at {timestamp}")
-
-# -------------------------------
-# Feature 1: Main Menu System
-# ------------------------------
-def search_expenses(condition):
     found = False
     for file in glob.glob("expenses_*.txt"):
         with open(file, "r") as f:
@@ -179,7 +166,32 @@ def search_expenses(condition):
                         print(f"{file}: {item} - {amount} RWF at {timestamp}")
                         found = True
     if not found:
-        print("Sorry! No matching results found.")
+        print("Unfortunately! No matching results found.")
+
+# ------------------------------
+#  Feature1: Main Menu System
+# -------------------------------
+def main_menu():
+    while True:
+        print("\n--- Personal Finance Tracker ---")
+        print("1. Check Remaining Balance")
+        print("2. View Expenses")
+        print("3. Add New Expense")
+        print("4. Exit")
+
+        choice = input("Enter choice (1-4): ")
+
+        if choice == "1":
+            check_balance()
+        elif choice == "2":
+            view_expenses()
+        elif choice == "3":
+            add_expense()
+        elif choice == "4":
+            print("Saving data... Goodbye!")
+            break
+        else:
+            print("Invalid choice. Try again.")
 
 # -------------------------------
 # Program Entry Point
