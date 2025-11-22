@@ -81,15 +81,22 @@ def check_balance():
 # ------------------------------
 #  Feature 3: Add New Expense
 # -------------------------------
+
 def add_expense():
     initial_balance = read_balance()
-
     total_expenses = calculate_total_expenses()
     available_balance = initial_balance - total_expenses
 
     print(f"\nAvailable Balance: {available_balance} RWF")
 
+    # Validate date format
     date = input("Enter date (YYYY-MM-DD): ")
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        print(" Wrong date format! Please use YYYY-MM-DD.")
+        return
+
     item = input("Enter item name: ")
 
     try:
@@ -103,12 +110,12 @@ def add_expense():
 
     if confirm == "y":
         if amount > available_balance:
-            print("Insufficient balance! Cannot save expense.")
+            print(" Insufficient balance! Cannot save expense.")
             return
 
         filename = f"expenses_{date}.txt"
 
-        # Generate sequential ID
+        #  Generate sequential ID
         try:
             with open(filename, "r") as f:
                 lines = f.readlines()
@@ -118,7 +125,7 @@ def add_expense():
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Save expense record
+        # Save expennse record
         with open(filename, "a") as f:
             f.write(f"{expense_id},{item},{amount},{timestamp}\n")
 
@@ -160,27 +167,19 @@ def search_expenses(condition):
 # -------------------------------
 # Feature 1: Main Menu System
 # ------------------------------
-def main_menu():
-    while True:
-        print("\n--- Personal Finance Tracker ---")
-        print("1. Check Remaining Balance")
-        print("2. View Expenses")
-        print("3. Add New Expense")
-        print("4. Exit")
-
-        choice = input("Enter choice (1-4): ")
-
-        if choice == "1":
-            check_balance()
-        elif choice == "2":
-            view_expenses()
-        elif choice == "3":
-            add_expense()
-        elif choice == "4":
-            print("Saving data... Goodbye!")
-            break
-        else:
-            print("Invalid choice. Try again.")
+def search_expenses(condition):
+    found = False
+    for file in glob.glob("expenses_*.txt"):
+        with open(file, "r") as f:
+            for line in f:
+                parts = line.strip().split(",")
+                if len(parts) >= 4:
+                    expense_id, item, amount, timestamp = parts
+                    if condition(item, int(amount)):
+                        print(f"{file}: {item} - {amount} RWF at {timestamp}")
+                        found = True
+    if not found:
+        print("Sorry! No matching results found.")
 
 # -------------------------------
 # Program Entry Point
